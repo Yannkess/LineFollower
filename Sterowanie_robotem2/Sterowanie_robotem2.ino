@@ -22,8 +22,8 @@ double lastError = 0;
 int dir1PinA = 2;
 int dir2PinA = 3;
 int speedPinA = 9;
-int BluetoothDane;  
-int predkosc = 100;
+int BluetoothData;  
+int follower_speed = 100;
 
 
 // Motor 2
@@ -45,9 +45,8 @@ int y;
 
 void setup() {
   Serial.begin(9600);  
-  
   Bluetooth.begin(9600);                      //uruchom SerialSoftware z prędkością 9600 baud
-  Bluetooth.println("Polaczyles sie wlasnie z modulem Bluetooth HC-05");
+ 
   
   pinMode(dir1PinA,OUTPUT);
   pinMode(dir2PinA,OUTPUT);
@@ -68,31 +67,31 @@ void loop() {
   if (Bluetooth.available())                  //Jeśli są jakieś dane
   {              
     
-   BluetoothDane=Bluetooth.read();             //przypisz zmiennej BluetoothDane odczytane dane z modułu
+   BluetoothData=Bluetooth.read();             //przypisz zmiennej BluetoothData odczytane dane z modułu
    
-   if(BluetoothDane=='1')                      //jeżeli odebrane dane to 1
+   if(BluetoothData=='1')                      //jeżeli odebrane dane to 1
       {  
        forward();
        Bluetooth.print("Jazda do przodu");
       }
    
-   if(BluetoothDane=='0')                      //jeżeli odebrane dane to 0
+   if(BluetoothData=='0')                      //jeżeli odebrane dane to 0
       {                  
        stop1();      
       }
-  if(BluetoothDane=='0')                      //jeżeli odebrane dane to 0
+  if(BluetoothData=='0')                      //jeżeli odebrane dane to 0
       {                  
        stop1();      
       }
-if(BluetoothDane=='2')                      //jeżeli odebrane dane to 0
+if(BluetoothData=='2')                      //jeżeli odebrane dane to 0
       {                  
        backward();      
       }
-    if(BluetoothDane=='3')                      //jeżeli odebrane dane to 0
+    if(BluetoothData=='3')                      //jeżeli odebrane dane to 0
       {                  
        turnleft();      
       }
-       if(BluetoothDane=='4')                      //jeżeli odebrane dane to 0
+       if(BluetoothData=='4')                      //jeżeli odebrane dane to 0
       {                  
        turnright();      
       }
@@ -104,19 +103,19 @@ if(BluetoothDane=='2')                      //jeżeli odebrane dane to 0
 
 
 void forward(){
-  analogWrite(speedPinA, predkosc);
+  analogWrite(speedPinA, follower_speed);
   digitalWrite(dir1PinA, LOW);
   digitalWrite(dir2PinA, HIGH);
-  analogWrite(speedPinB, predkosc);
+  analogWrite(speedPinB, follower_speed);
   digitalWrite(dir1PinB, LOW);
   digitalWrite(dir2PinB, HIGH);
 }
 
 void backward(){
-  analogWrite(speedPinA, predkosc);
+  analogWrite(speedPinA, follower_speed);
   digitalWrite(dir1PinA, HIGH);
   digitalWrite(dir2PinA, LOW);
-  analogWrite(speedPinB, predkosc);
+  analogWrite(speedPinB, follower_speed);
   digitalWrite(dir1PinB, HIGH);
   digitalWrite(dir2PinB, LOW);
 
@@ -131,18 +130,18 @@ void stop1(){
   digitalWrite(dir2PinB, HIGH);
 }
 void turnleft() {
-  analogWrite(speedPinA, predkosc);
+  analogWrite(speedPinA, follower_speed);
   digitalWrite(dir1PinA, LOW);
   digitalWrite(dir2PinA, HIGH);
-  analogWrite(speedPinB, predkosc);
+  analogWrite(speedPinB, follower_speed);
   digitalWrite(dir1PinB, HIGH);
   digitalWrite(dir2PinB, LOW);
 }
 void turnright() {
-  analogWrite(speedPinB, predkosc);
+  analogWrite(speedPinB, follower_speed);
   digitalWrite(dir1PinB, LOW);
   digitalWrite(dir2PinB, HIGH);
-  analogWrite(speedPinA, predkosc);
+  analogWrite(speedPinA, follower_speed);
   digitalWrite(dir1PinA, HIGH);
   digitalWrite(dir2PinA, LOW);
 
