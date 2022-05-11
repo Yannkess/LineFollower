@@ -8,9 +8,8 @@ int emitterPin = 12;
 QTRSensors qtr;
 
 // Parametry regulatora PD
-double kp = 0.5;
-double kd = 1;
-double pv = 0;
+double kp = 0.02;
+double kd = 0;
 double error = 0;     // Uchyb sterowania
 double lastError = 0; // Poprzedni uchyb sterowania
 
@@ -68,14 +67,14 @@ void loop() {
   
   comunication(); // Obsługa komunikacji bezprzewodowej
 
-  error = 3500 - position;    // Wyznaczenie uchybu sterowania
+  error = 2500 - position;    // Wyznaczenie uchybu sterowania
   int motorSpeed = kp * error + kd * (error - lastError);
   lastError = error;
   
   leftSpeed = minSpeed + motorSpeed;
   rightSpeed = minSpeed - motorSpeed;
 
-  forwardFollow();
+  forwardFollow(leftSpeed,rightSpeed);
   
   }
   
