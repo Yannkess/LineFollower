@@ -1,9 +1,9 @@
               //Code by Marcin Jankowski and Kacper Wierciński
 
-#include <SoftwareSerial.h>
+
 #include <QTRSensors.h>
 
-SoftwareSerial Bluetooth(0, 1); 
+
 
 // Parametry czujników odbiciowych
 const uint8_t Num_sensors = 6; // Liczba czujników
@@ -33,21 +33,18 @@ int speedPinB = 10;
 
 int d6 = 6;
 int d7 = 7;
-int speed;
-int X;
-int Y;
-int x;
-int y;
-
-
-
 
 
 void setup() {
-  Serial.begin(9600);  
-  Bluetooth.begin(9600);                      //uruchom SerialSoftware z prędkością 9600 baud
- 
   
+  qtr.setTypeAnalog();
+  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5}, Num_sensors);
+  qtr.setEmitterPin(12);
+
+  delay(500);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+
   pinMode(dir1PinA,OUTPUT);
   pinMode(dir2PinA,OUTPUT);
   pinMode(speedPinA,OUTPUT);
@@ -55,48 +52,75 @@ void setup() {
   pinMode(dir2PinB,OUTPUT);
   pinMode(speedPinB,OUTPUT);
 
-  qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5}, Num_sensors);
-  qtr.setEmitterPin(2);
+for (uint16_t i = 0; i < 400; i++)
+  {
+    qtr.calibrate();
+  }
+  digitalWrite(LED_BUILTIN, LOW);
+  
+  
+  Serial.begin(9600);  
+                   
+
+ for (uint8_t i = 0; i < Num_sensors; i++)
+  {
+    Serial.print(qtr.calibrationOn.minimum[i]);
+    Serial.print(' ');
+  }
+  Serial.println();
+
+  for (uint8_t i = 0; i < Num_sensors; i++)
+  {
+    Serial.print(qtr.calibrationOn.maximum[i]);
+    Serial.print(' ');
+  }
+  Serial.println();
+  Serial.println();
+  delay(1000);
+  
+  
 }
 
 void loop() {
+uint16_t position = qtr.readLineBlack(sensorValues);
+
+for (uint8_t i = 0; i < Num_sensors; i++)
+  {
+    Serial.print(sensorValues[i]);
+    Serial.print("|");
+  }
+  Serial.println(position);
+
+  delay(250);
 
 
-
-  if (Bluetooth.available())                  //Jeśli są jakieś dane
-  {              
+             
     
-   BluetoothData=Bluetooth.read();             //przypisz zmiennej BluetoothData odczytane dane z modułu
+   BluetoothData=Serial.read();             //przypisz zmiennej BluetoothData odczytane dane z modułu
    
    if(BluetoothData=='1')                      //jeżeli odebrane dane to 1
       {  
        forward();
-       Bluetooth.print("Jazda do przodu");
       }
    
    if(BluetoothData=='0')                      //jeżeli odebrane dane to 0
       {                  
        stop1();      
       }
-  if(BluetoothData=='0')                      //jeżeli odebrane dane to 0
-      {                  
-       stop1();      
-      }
-if(BluetoothData=='2')                      //jeżeli odebrane dane to 0
+if(BluetoothData=='2')                      //jeżeli odebrane dane to 2
       {                  
        backward();      
       }
-    if(BluetoothData=='3')                      //jeżeli odebrane dane to 0
+    if(BluetoothData=='3')                      //jeżeli odebrane dane to 3
       {                  
        turnleft();      
       }
-       if(BluetoothData=='4')                      //jeżeli odebrane dane to 0
+       if(BluetoothData=='4')                      //jeżeli odebrane dane to 4
       {                  
        turnright();      
       }
   }
-}
+
 
 
 
